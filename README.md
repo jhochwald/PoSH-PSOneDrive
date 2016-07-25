@@ -6,9 +6,11 @@
 - [SYNOPSIS](#synopsis)
 - [DESCRIPTION](#description)
 - [Changes](#changes)
+	- [Why the Fork](#why-the-fork)
+- [Plan](#plan)
 - [Copyright](#copyright)
 - [Source](#source)
-- [PowerShell Galery](#powershell-galery)
+	- [PowerShell Galery](#powershell-galery)
 
 <!-- /MarkdownTOC -->
 
@@ -30,6 +32,15 @@ Please write Marcel Meurer a mail if you find some errors or if you have a reque
 ## Changes
 I just did some refactoring for now.
 
+<a name="why-the-fork"></a>
+### Why the Fork
+Found the Module on [PowerShell Galery](https://www.powershellgallery.com/packages/OneDrive/0.9.2) and I want to try if I can get rid of the Web-Form for the Login.
+
+<a name="plan"></a>
+## Plan
+* Add some Pester Tests (started)
+* Get rid of the Web-Form (That one is a Challenge)
+
 <a name="copyright"></a>
 ## Copyright
 (c) 2016 Marcel Meurer - sepago GmbH
@@ -39,5 +50,5 @@ I just did some refactoring for now.
 https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 
 <a name="powershell-galery"></a>
-## PowerShell Galery
+### PowerShell Galery
 https://www.powershellgallery.com/packages/OneDrive/0.9.2
