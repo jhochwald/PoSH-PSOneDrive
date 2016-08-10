@@ -33,17 +33,14 @@ function Get-ODAuthentication {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'The ClientID of the APP')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$ClientID,
-		[Parameter(HelpMessage = 'Comma seperated string defining the authentication scope ')]
-		[System.String]$Scope = 'onedrive.readwrite',
-		[Parameter(HelpMessage = 'Do NOT use this parameter.')]
-		[System.String]$RedirectURI = 'https://login.live.com/oauth20_desktop.srf'
+		[string]$ClientID,
+		[string]$Scope = 'onedrive.readwrite',
+		[string]$RedirectURI = 'https://login.live.com/oauth20_desktop.srf'
 	)
 
 	BEGIN {
@@ -81,11 +78,11 @@ function Get-ODAuthentication {
 		$ReturnURI = ($web.Url).ToString().Replace('#', '&')
 		$Authentication = (New-Object -TypeName PSObject)
 		ForEach ($element in $ReturnURI.Split('?')[1].Split('&')) {
-			$Authentication | Add-Member Noteproperty $element.split('=')[0] $element.split('=')[1]
+			$Authentication | Add-Member -MemberType Noteproperty -Name $element.split('=')[0] -Value $element.split('=')[1]
 		}
 
 		if ($Authentication.PSobject.Properties.name -match 'expires_in') {
-			$Authentication | Add-Member Noteproperty 'expires' ([System.DateTime]::Now.AddSeconds($Authentication.expires_in))
+			$Authentication | Add-Member -MemberType Noteproperty -Name 'expires' -Value ([datetime]::Now.AddSeconds($Authentication.expires_in))
 		}
 
 		if (!($Authentication.PSobject.Properties.name -match 'expires_in')) {
@@ -128,20 +125,16 @@ function Get-ODWebContent {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$AccessToken,
-		[Parameter(HelpMessage = 'Relative path to the API')]
-		[System.String]$rURI = '',
-		[Parameter(HelpMessage = 'Web request method')]
+		[string]$AccessToken,
+		[string]$rURI = '',
 		[ValidateSet('PUT', 'GET', 'POST', 'PATCH', 'DELETE')]
-		[System.String]$Method = 'GET',
-		[Parameter(HelpMessage = 'Payload of a web request')]
-		[System.String]$Body,
+		[string]$Method = 'GET',
+		[string]$Body,
 		[switch]$BinaryMode
 	)
 
@@ -161,7 +154,7 @@ function Get-ODWebContent {
 				Authorization = 'BEARER ' + $AccessToken
 			} -ContentType 'application/json' -Body $xBody -ErrorAction SilentlyContinue
 		} catch {
-			Write-Error('Cannot access the API. Web request return code is: ' + $_.Exception.Response.StatusCode + "`n" + $_.Exception.Response.StatusDescription)
+			Write-Error -Message ('Cannot access the API. Web request return code is: ' + $_.Exception.Response.StatusCode + "`n" + $_.Exception.Response.StatusDescription)
 			break
 		}
 
@@ -223,13 +216,12 @@ function Get-ODDrives {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$AccessToken
+		[string]$AccessToken
 	)
 
 	PROCESS {
@@ -265,15 +257,11 @@ function Format-ODPathorIDString {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
-		[Parameter(HelpMessage = 'Specifies the path of an element.')]
-		[System.String]$Path = '',
-		[Parameter(HelpMessage = 'Specifies the OneDrive drive id')]
-		[System.String]$DriveID = '',
-		[Parameter(HelpMessage = 'Specifies the id of an element')]
-		[System.String]$ElementID = ''
+		[string]$Path = '',
+		[string]$DriveID = '',
+		[string]$ElementID = ''
 	)
 
 	PROCESS {
@@ -295,7 +283,7 @@ function Format-ODPathorIDString {
 
 			# encoding of URL parts
 			$tmpString = ''
-			foreach ($Sub in $Path.Split('/')) { $tmpString += [System.Web.HttpUtility]::UrlEncode($Sub) + '/' }
+			foreach ($Sub in $Path.Split('/')) { $tmpString += [Web.HttpUtility]::UrlEncode($Sub) + '/' }
 			$Path = $tmpString
 
 			# remove last "/" if exist
@@ -360,20 +348,15 @@ function Get-ODItemProperty {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'A valid access token for bearer authorization')]
-		[System.String]$AccessToken,
-		[Parameter(HelpMessage = 'Specifies the path to the element/item')]
-		[System.String]$Path = '/',
-		[Parameter(HelpMessage = 'Specifies the id of the element/item.')]
-		[System.String]$ElementID = '',
-		[Parameter(HelpMessage = 'Specifies a comma separated list of the properties to be returned for file and folder objects')]
-		[System.String]$SelectProperties = 'name,size,lastModifiedDateTime,id',
-		[Parameter(HelpMessage = 'Specifies the OneDrive drive id.')]
-		[System.String]$DriveID = ''
+		[string]$AccessToken,
+		[string]$Path = '/',
+		[string]$ElementID = '',
+		[string]$SelectProperties = 'name,size,lastModifiedDateTime,id',
+		[string]$DriveID = ''
 	)
 
 	PROCESS {
@@ -436,22 +419,17 @@ function Get-ODChildItems {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'A valid access token for bearer authorization')]
-		[System.String]$AccessToken,
-		[Parameter(HelpMessage = 'Specifies the path of elements to be listed.')]
-		[System.String]$Path = '/',
-		[Parameter(HelpMessage = 'Specifies the id of an element.')]
-		[System.String]$ElementID = '',
-		[Parameter(HelpMessage = 'Specifies a comma separated list of the properties to be returned for file and folder objects')]
-		[System.String]$SelectProperties = 'name,size,lastModifiedDateTime,id',
-		[Parameter(HelpMessage = 'Specifies the OneDrive drive id.')]
-		[System.String]$DriveID = '',
+		[string]$AccessToken,
+		[string]$Path = '/',
+		[string]$ElementID = '',
+		[string]$SelectProperties = 'name,size,lastModifiedDateTime,id',
+		[string]$DriveID = '',
 		[switch]$ItemPropertyMode,
-		[System.String]$SearchText
+		[string]$SearchText
 	)
 
 	BEGIN {
@@ -548,25 +526,20 @@ function Search-ODItems {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$AccessToken,
+		[string]$AccessToken,
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'Specifies search string')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$SearchText,
-		[Parameter(HelpMessage = 'Specifies the path of the folder to start the search.')]
-		[System.String]$Path = '/',
-		[Parameter(HelpMessage = 'Specifies the element id of the folder to start the search.')]
-		[System.String]$ElementID = '',
-		[Parameter(HelpMessage = 'Specifies a comma separated list of the properties to be returned for file and folder objects')]
-		[System.String]$SelectProperties = 'name,size,lastModifiedDateTime,id',
-		[Parameter(HelpMessage = 'Specifies the OneDrive drive id.')]
-		[System.String]$DriveID = ''
+		[string]$SearchText,
+		[string]$Path = '/',
+		[string]$ElementID = '',
+		[string]$SelectProperties = 'name,size,lastModifiedDateTime,id',
+		[string]$DriveID = ''
 	)
 
 	PROCESS {
@@ -611,23 +584,19 @@ function New-ODFolder {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$AccessToken,
+		[string]$AccessToken,
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'Name of the new folder')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$FolderName,
-		[Parameter(HelpMessage = 'Specifies the parent path for the new folder.')]
-		[System.String]$Path = '/',
-		[Parameter(HelpMessage = 'Specifies the element id for the new folder.')]
-		[System.String]$ElementID = '',
-		[Parameter(HelpMessage = 'Specifies the OneDrive drive id.')]
-		[System.String]$DriveID = ''
+		[string]$FolderName,
+		[string]$Path = '/',
+		[string]$ElementID = '',
+		[string]$DriveID = ''
 	)
 
 	BEGIN {
@@ -678,23 +647,21 @@ function Remove-ODItem {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$AccessToken,
+		[string]$AccessToken,
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'Specifies the path of the item to be deleted')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$Path,
+		[string]$Path,
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'Specifies the element id of the item to be deleted')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$ElementID,
-		[Parameter(HelpMessage = 'Specifies the OneDrive drive id.')]
-		[System.String]$DriveID = ''
+		[string]$ElementID,
+		[string]$DriveID = ''
 	)
 
 	PROCESS {
@@ -752,23 +719,17 @@ function Get-ODItem {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$AccessToken,
-		[Parameter(HelpMessage = 'Specifies the path of the file to download.')]
-		[System.String]$Path = '',
-		[Parameter(HelpMessage = 'Specifies the element id of the file to download.')]
-		[System.String]$ElementID = '',
-		[Parameter(HelpMessage = 'Specifies the OneDrive drive id.')]
-		[System.String]$DriveID = '',
-		[Parameter(HelpMessage = 'Save file to path')]
-		[System.String]$LocalPath = '',
-		[Parameter(HelpMessage = 'Local filename.')]
-		[System.String]$LocalFileName
+		[string]$AccessToken,
+		[string]$Path = '',
+		[string]$ElementID = '',
+		[string]$DriveID = '',
+		[string]$LocalPath = '',
+		[string]$LocalFileName
 	)
 
 	PROCESS {
@@ -787,7 +748,7 @@ function Get-ODItem {
 			}
 
 			try {
-				[System.Net.WebClient]::WebClient
+				[Net.WebClient]::WebClient
 				$client = (New-Object -TypeName System.Net.WebClient)
 				$client.DownloadFile($Download.'@content.downloadUrl', $SaveTo)
 
@@ -795,7 +756,7 @@ function Get-ODItem {
 
 				return 0
 			} catch {
-				Write-Error('Download error: ' + $_.Exception.Response.StatusCode + "`n" + $_.Exception.Response.StatusDescription)
+				Write-Error -Message ('Download error: ' + $_.Exception.Response.StatusCode + "`n" + $_.Exception.Response.StatusDescription)
 				return -1
 			}
 		}
@@ -840,23 +801,19 @@ function Add-ODItem {
 		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
 #>
 
-	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$AccessToken,
-		[Parameter(HelpMessage = 'Specifies the path for the upload folder.')]
-		[System.String]$Path = '/',
-		[Parameter(HelpMessage = 'Specifies the element id for the upload folder.')]
-		[System.String]$ElementID = '',
-		[Parameter(HelpMessage = 'Specifies the OneDrive drive id.')]
-		[System.String]$DriveID = '',
+		[string]$AccessToken,
+		[string]$Path = '/',
+		[string]$ElementID = '',
+		[string]$DriveID = '',
 		[Parameter(Mandatory = $true,
 				   HelpMessage = 'Path and file of the local file to be uploaded')]
 		[ValidateNotNullOrEmpty()]
-		[System.String]$LocalFile
+		[string]$LocalFile
 	)
 
 	BEGIN {
@@ -866,12 +823,12 @@ function Add-ODItem {
 	PROCESS {
 		try {
 			$ODRootURI = 'https://api.onedrive.com/v1.0'
-			$rURI = (($ODRootURI + $rURI).TrimEnd(':') + '/' + [System.IO.Path]::GetFileName($LocalFile) + ':/content').Replace('/root/', '/root:/')
+			$rURI = (($ODRootURI + $rURI).TrimEnd(':') + '/' + [IO.Path]::GetFileName($LocalFile) + ':/content').Replace('/root/', '/root:/')
 			return $webRequest = Invoke-WebRequest -Method PUT -InFile $LocalFile -Uri $rURI -Headers @{
 				Authorization = 'BEARER ' + $AccessToken
 			} -ContentType 'multipart/form-data' -ErrorAction SilentlyContinue
 		} catch {
-			Write-Error('Upload error: ' + $_.Exception.Response.StatusCode + "`n" + $_.Exception.Response.StatusDescription)
+			Write-Error -Message ('Upload error: ' + $_.Exception.Response.StatusCode + "`n" + $_.Exception.Response.StatusDescription)
 			return -1
 		}
 	}
