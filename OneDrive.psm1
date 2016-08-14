@@ -1,42 +1,42 @@
 #requires -Version 3
 
 function Get-ODAuthentication {
-<#
-	.SYNOPSIS
-		Connect to OneDrive for authentication with a given client id
+	<#
+			.SYNOPSIS
+			Connect to OneDrive for authentication with a given client id
 
-	.DESCRIPTION
-		Connect to OneDrive for authentication with a given client id
-		(get your free client id on https://dev.onedrive.com/app-registration.htm#register-your-app-for-onedrive)
+			.DESCRIPTION
+			Connect to OneDrive for authentication with a given client id
+			(get your free client id on https://dev.onedrive.com/app-registration.htm#register-your-app-for-onedrive)
 
-	.PARAMETER ClientID
-		ClientID of your "app" from https://dev.onedrive.com/app-registration.htm#register-your-app-for-onedrive)
+			.PARAMETER ClientID
+			ClientID of your "app" from https://dev.onedrive.com/app-registration.htm#register-your-app-for-onedrive)
 
-	.PARAMETER Scope
-		Comma seperated string defining the authentication scope (https://dev.onedrive.com/auth/msa_oauth.htm). Default: "onedrive.readwrite"
+			.PARAMETER Scope
+			Comma seperated string defining the authentication scope (https://dev.onedrive.com/auth/msa_oauth.htm). Default: "onedrive.readwrite"
 
-	.PARAMETER RedirectURI
-		Don't use this parameter. You only need this to write your own web based app for OneDrive. Default is https://login.live.com/oauth20_desktop.srf
+			.PARAMETER RedirectURI
+			Don't use this parameter. You only need this to write your own web based app for OneDrive. Default is https://login.live.com/oauth20_desktop.srf
 
-	.EXAMPLE
-		PS C:\> $Authentication = (Get-ODAuthentication -ClientID "0000000012345678")
-		PS C:\> $AuthToken = $Authentication.access_token
+			.EXAMPLE
+			PS C:\> $Authentication = (Get-ODAuthentication -ClientID "0000000012345678")
+			PS C:\> $AuthToken = $Authentication.access_token
 
-		Description
-		-----------
-		Connect to OneDrive for authentication and save the token to $AuthToken
+			Description
+			-----------
+			Connect to OneDrive for authentication and save the token to $AuthToken
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'The ClientID of the APP')]
+		[Parameter(Mandatory,
+		HelpMessage = 'The ClientID of the APP')]
 		[ValidateNotNullOrEmpty()]
 		[string]$ClientID,
 		[string]$Scope = 'onedrive.readwrite',
@@ -44,9 +44,9 @@ function Get-ODAuthentication {
 	)
 
 	BEGIN {
-		$null = [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
-		$null = [Reflection.Assembly]::LoadWithPartialName('System.Drawing')
-		$null = [Reflection.Assembly]::LoadWithPartialName('System.Web')
+		$null = Add-Type -AssemblyName System.Windows.Forms
+		$null = Add-Type -AssemblyName System.Drawing
+		$null = Add-Type -AssemblyName System.Web
 
 		$URIGetAccessTokenRedirect = $RedirectURI
 		$URIGetAccessToken = 'https://login.live.com/oauth20_authorize.srf?client_id=' + $ClientID + '&scope=' + $Scope + '&response_type=token&redirect_uri=' + $URIGetAccessTokenRedirect
@@ -96,39 +96,39 @@ function Get-ODAuthentication {
 }
 
 function Get-ODWebContent {
-<#
-	.SYNOPSIS
-		Internal function to interact with the OneDrive API
+	<#
+			.SYNOPSIS
+			Internal function to interact with the OneDrive API
 
-	.DESCRIPTION
-		Internal function to interact with the OneDrive API
+			.DESCRIPTION
+			Internal function to interact with the OneDrive API
 
-	.PARAMETER AccessToken
-		A valid access token for bearer authorization
+			.PARAMETER AccessToken
+			A valid access token for bearer authorization
 
-	.PARAMETER rURI
-		Relative path to the API
+			.PARAMETER rURI
+			Relative path to the API
 
-	.PARAMETER Method
-		Web request method like PUT, GET, ...
+			.PARAMETER Method
+			Web request method like PUT, GET, ...
 
-	.PARAMETER Body
-		Payload of a web request
+			.PARAMETER Body
+			Payload of a web request
 
-	.PARAMETER BinaryMode
-		Do not convert response to JSON
+			.PARAMETER BinaryMode
+			Do not convert response to JSON
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'A valid access token for bearer authorization')]
+		[Parameter(Mandatory,
+		HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
 		[string]$AccessToken,
 		[string]$rURI = '',
@@ -192,34 +192,34 @@ function Get-ODWebContent {
 }
 
 function Get-ODDrives {
-<#
-	.SYNOPSIS
-		Get user's drives
+	<#
+			.SYNOPSIS
+			Get user's drives
 
-	.DESCRIPTION
-		Get user's drives
+			.DESCRIPTION
+			Get user's drives
 
-	.PARAMETER AccessToken
-		A valid access token for bearer authorization
+			.PARAMETER AccessToken
+			A valid access token for bearer authorization
 
-	.EXAMPLE
-		PS C:\> Get-ODDrives -AccessToken $AuthToken
+			.EXAMPLE
+			PS C:\> Get-ODDrives -AccessToken $AuthToken
 
-		Description
-		-----------
-		List all OneDrives available for your account (there is normally only one)
+			Description
+			-----------
+			List all OneDrives available for your account (there is normally only one)
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'A valid access token for bearer authorization')]
+		[Parameter(Mandatory,
+		HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
 		[string]$AccessToken
 	)
@@ -234,28 +234,28 @@ function Get-ODDrives {
 }
 
 function Format-ODPathorIDString {
-<#
-	.SYNOPSIS
-		Formats a given path into an expected uri format
+	<#
+			.SYNOPSIS
+			Formats a given path into an expected uri format
 
-	.DESCRIPTION
-		Formats a given path like '/myFolder/mySubfolder/myFile' into an expected uri format
+			.DESCRIPTION
+			Formats a given path like '/myFolder/mySubfolder/myFile' into an expected uri format
 
-	.PARAMETER Path
-		Specifies the path of an element. If it is not given, the path is "/"
+			.PARAMETER Path
+			Specifies the path of an element. If it is not given, the path is "/"
 
-	.PARAMETER DriveID
-		Specifies the OneDrive drive id. If not set, the default drive is used
+			.PARAMETER DriveID
+			Specifies the OneDrive drive id. If not set, the default drive is used
 
-	.PARAMETER ElementID
-		Specifies the id of an element. If Path and ElementID are given, the ElementID is used with a warning
+			.PARAMETER ElementID
+			Specifies the id of an element. If Path and ElementID are given, the ElementID is used with a warning
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
@@ -304,54 +304,54 @@ function Format-ODPathorIDString {
 }
 
 function Get-ODItemProperty {
-<#
-	.SYNOPSIS
-		Get the properties of an item
+	<#
+			.SYNOPSIS
+			Get the properties of an item
 
-	.DESCRIPTION
-		Get the properties of an item (file or folder)
+			.DESCRIPTION
+			Get the properties of an item (file or folder)
 
-	.PARAMETER AccessToken
-		A valid access token for bearer authorization
+			.PARAMETER AccessToken
+			A valid access token for bearer authorization
 
-	.PARAMETER Path
-		Specifies the path to the element/item. If not given, the properties of your default root drive are listed
+			.PARAMETER Path
+			Specifies the path to the element/item. If not given, the properties of your default root drive are listed
 
-	.PARAMETER ElementID
-		Specifies the id of the element/item. If Path and ElementID are given, the ElementID is used with a warning
+			.PARAMETER ElementID
+			Specifies the id of the element/item. If Path and ElementID are given, the ElementID is used with a warning
 
-	.PARAMETER SelectProperties
-		Specifies a comma separated list of the properties to be returned for file and folder objects (case sensitive). If not set, name, size, lastModifiedDateTime and id are used. (See https://dev.onedrive.com/odata/optional-query-parameters.htm).
-		If you use -SelectProperties "", all properties are listed. Warning: A complex "content.downloadUrl" is listed/generated for download files without authentication for several hours
+			.PARAMETER SelectProperties
+			Specifies a comma separated list of the properties to be returned for file and folder objects (case sensitive). If not set, name, size, lastModifiedDateTime and id are used. (See https://dev.onedrive.com/odata/optional-query-parameters.htm).
+			If you use -SelectProperties "", all properties are listed. Warning: A complex "content.downloadUrl" is listed/generated for download files without authentication for several hours
 
-	.PARAMETER DriveID
-		Specifies the OneDrive drive id. If not set, the default drive is used
+			.PARAMETER DriveID
+			Specifies the OneDrive drive id. If not set, the default drive is used
 
-	.EXAMPLE
-		PS C:\> Get-ODItemProperty -AccessToken $AuthToken -Path "/Data/documents/2016/AzureML with PowerShell.docx"
+			.EXAMPLE
+			PS C:\> Get-ODItemProperty -AccessToken $AuthToken -Path "/Data/documents/2016/AzureML with PowerShell.docx"
 
-		Description
-		-----------
-		Get the default set of metadata for a file or folder (name, size, lastModifiedDateTime, id)
+			Description
+			-----------
+			Get the default set of metadata for a file or folder (name, size, lastModifiedDateTime, id)
 
-	.EXAMPLE
-		PS C:\> Get-ODItemProperty -AccessToken $AuthToken -ElementID 8BADCFF017EAA324!12169 -SelectProperties ""
+			.EXAMPLE
+			PS C:\> Get-ODItemProperty -AccessToken $AuthToken -ElementID 8BADCFF017EAA324!12169 -SelectProperties ""
 
-		Description
-		-----------
-		Get all metadata of a file or folder by element id ("" select all properties)
+			Description
+			-----------
+			Get all metadata of a file or folder by element id ("" select all properties)
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'A valid access token for bearer authorization')]
+		[Parameter(Mandatory,
+		HelpMessage = 'A valid access token for bearer authorization')]
 		[string]$AccessToken,
 		[string]$Path = '/',
 		[string]$ElementID = '',
@@ -369,60 +369,60 @@ function Get-ODItemProperty {
 }
 
 function Get-ODChildItems {
-<#
-	.SYNOPSIS
-		Get child items of a path. Return count is not limited.
+	<#
+			.SYNOPSIS
+			Get child items of a path. Return count is not limited.
 
-	.DESCRIPTION
-		Get child items of a path. Return count is not limited.
+			.DESCRIPTION
+			Get child items of a path. Return count is not limited.
 
-	.PARAMETER AccessToken
-		A valid access token for bearer authorization
+			.PARAMETER AccessToken
+			A valid access token for bearer authorization
 
-	.PARAMETER Path
-		Specifies the path of elements to be listed. If not given, the path is "/"
+			.PARAMETER Path
+			Specifies the path of elements to be listed. If not given, the path is "/"
 
-	.PARAMETER ElementID
-		Specifies the id of an element. If Path and ElementID are given, the ElementID is used with a warning
+			.PARAMETER ElementID
+			Specifies the id of an element. If Path and ElementID are given, the ElementID is used with a warning
 
-	.PARAMETER SelectProperties
-		Specifies a comma separated list of the properties to be returned for file and folder objects (case sensitive). If not set, name, size, lastModifiedDateTime and id are used. (See https://dev.onedrive.com/odata/optional-query-parameters.htm).
-		If you use -SelectProperties "", all properties are listed. Warning: A complex "content.downloadUrl" is listed/generated for download files without authentication for several hours
+			.PARAMETER SelectProperties
+			Specifies a comma separated list of the properties to be returned for file and folder objects (case sensitive). If not set, name, size, lastModifiedDateTime and id are used. (See https://dev.onedrive.com/odata/optional-query-parameters.htm).
+			If you use -SelectProperties "", all properties are listed. Warning: A complex "content.downloadUrl" is listed/generated for download files without authentication for several hours
 
-	.PARAMETER DriveID
-		Specifies the OneDrive drive id. If not set, the default drive is used
+			.PARAMETER DriveID
+			Specifies the OneDrive drive id. If not set, the default drive is used
 
-	.PARAMETER ItemPropertyMode
-		A description of the ItemPropertyMode parameter.
+			.PARAMETER ItemPropertyMode
+			A description of the ItemPropertyMode parameter.
 
-	.PARAMETER SearchText
-		A description of the SearchText parameter.
+			.PARAMETER SearchText
+			A description of the SearchText parameter.
 
-	.EXAMPLE
-		PS C:\> Get-ODChildItems -AccessToken $AuthToken -Path "/" | ft
+			.EXAMPLE
+			PS C:\> Get-ODChildItems -AccessToken $AuthToken -Path "/" | ft
 
-		Description
-		-----------
-		Lists files and folders in your OneDrives root folder and displays name, size, lastModifiedDateTime, id and folder property as a table
+			Description
+			-----------
+			Lists files and folders in your OneDrives root folder and displays name, size, lastModifiedDateTime, id and folder property as a table
 
-	.EXAMPLE
-		PS C:\> Get-ODChildItems -AccessToken $AuthToken -Path "/" -SelectProperties ""
+			.EXAMPLE
+			PS C:\> Get-ODChildItems -AccessToken $AuthToken -Path "/" -SelectProperties ""
 
-		Description
-		-----------
-		Lists files and folders in your OneDrives root folder and displays all properties
+			Description
+			-----------
+			Lists files and folders in your OneDrives root folder and displays all properties
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'A valid access token for bearer authorization')]
+		[Parameter(Mandatory,
+		HelpMessage = 'A valid access token for bearer authorization')]
 		[string]$AccessToken,
 		[string]$Path = '/',
 		[string]$ElementID = '',
@@ -486,54 +486,54 @@ function Get-ODChildItems {
 }
 
 function Search-ODItems {
-<#
-	.SYNOPSIS
-		Search for items starting from Path or ElementID
+	<#
+			.SYNOPSIS
+			Search for items starting from Path or ElementID
 
-	.DESCRIPTION
-		Search for items starting from Path or ElementID
+			.DESCRIPTION
+			Search for items starting from Path or ElementID
 
-	.PARAMETER AccessToken
-		A valid access token for bearer authorization
+			.PARAMETER AccessToken
+			A valid access token for bearer authorization
 
-	.PARAMETER SearchText
-		Specifies search string
+			.PARAMETER SearchText
+			Specifies search string
 
-	.PARAMETER Path
-		Specifies the path of the folder to start the search. If not given, the path is "/"
+			.PARAMETER Path
+			Specifies the path of the folder to start the search. If not given, the path is "/"
 
-	.PARAMETER ElementID
-		Specifies the element id of the folder to start the search. If Path and ElementID are given, the ElementID is used with a warning
+			.PARAMETER ElementID
+			Specifies the element id of the folder to start the search. If Path and ElementID are given, the ElementID is used with a warning
 
-	.PARAMETER SelectProperties
-		Specifies a comma separated list of the properties to be returned for file and folder objects (case sensitive). If not set, name, size, lastModifiedDateTime and id are used. (See https://dev.onedrive.com/odata/optional-query-parameters.htm).
-		If you use -SelectProperties "", all properties are listed. Warning: A complex "content.downloadUrl" is listed/generated for download files without authentication for several hours
+			.PARAMETER SelectProperties
+			Specifies a comma separated list of the properties to be returned for file and folder objects (case sensitive). If not set, name, size, lastModifiedDateTime and id are used. (See https://dev.onedrive.com/odata/optional-query-parameters.htm).
+			If you use -SelectProperties "", all properties are listed. Warning: A complex "content.downloadUrl" is listed/generated for download files without authentication for several hours
 
-	.PARAMETER DriveID
-		Specifies the OneDrive drive id. If not set, the default drive is used
+			.PARAMETER DriveID
+			Specifies the OneDrive drive id. If not set, the default drive is used
 
-	.EXAMPLE
-		PS C:\> Search-ODItems -AccessToken $AuthToken -Path "/My pictures" -SearchText "FolderA"
+			.EXAMPLE
+			PS C:\> Search-ODItems -AccessToken $AuthToken -Path "/My pictures" -SearchText "FolderA"
 
-		Description
-		-----------
-		Search for items in a sub folder recursively. Take a look at OneDrives API documentation to see how search (preview) works (file and folder names, in files, …)
+			Description
+			-----------
+			Search for items in a sub folder recursively. Take a look at OneDrives API documentation to see how search (preview) works (file and folder names, in files, …)
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'A valid access token for bearer authorization')]
+		[Parameter(Mandatory,
+		HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
 		[string]$AccessToken,
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'Specifies search string')]
+		[Parameter(Mandatory,
+		HelpMessage = 'Specifies search string')]
 		[ValidateNotNullOrEmpty()]
 		[string]$SearchText,
 		[string]$Path = '/',
@@ -548,50 +548,50 @@ function Search-ODItems {
 }
 
 function New-ODFolder {
-<#
-	.SYNOPSIS
-		Create a new folder
+	<#
+			.SYNOPSIS
+			Create a new folder
 
-	.DESCRIPTION
-		Create a new folder in OneDrive
+			.DESCRIPTION
+			Create a new folder in OneDrive
 
-	.PARAMETER AccessToken
-		A valid access token for bearer authorization
+			.PARAMETER AccessToken
+			A valid access token for bearer authorization
 
-	.PARAMETER FolderName
-		Name of the new folder
+			.PARAMETER FolderName
+			Name of the new folder
 
-	.PARAMETER Path
-		Specifies the parent path for the new folder. If not given, the path is "/"
+			.PARAMETER Path
+			Specifies the parent path for the new folder. If not given, the path is "/"
 
-	.PARAMETER ElementID
-		Specifies the element id for the new folder. If Path and ElementID are given, the ElementID is used with a warning
+			.PARAMETER ElementID
+			Specifies the element id for the new folder. If Path and ElementID are given, the ElementID is used with a warning
 
-	.PARAMETER DriveID
-		Specifies the OneDrive drive id. If not set, the default drive is used
+			.PARAMETER DriveID
+			Specifies the OneDrive drive id. If not set, the default drive is used
 
-	.EXAMPLE
-		PS C:\> New-ODFolder -AccessToken $AuthToken -Path "/data/documents" -FolderName "2016"
+			.EXAMPLE
+			PS C:\> New-ODFolder -AccessToken $AuthToken -Path "/data/documents" -FolderName "2016"
 
-		Description
-		-----------
-		Creates a new folder "2016" under "/data/documents"
+			Description
+			-----------
+			Creates a new folder "2016" under "/data/documents"
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'A valid access token for bearer authorization')]
+		[Parameter(Mandatory,
+		HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
 		[string]$AccessToken,
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'Name of the new folder')]
+		[Parameter(Mandatory,
+		HelpMessage = 'Name of the new folder')]
 		[ValidateNotNullOrEmpty()]
 		[string]$FolderName,
 		[string]$Path = '/',
@@ -614,51 +614,51 @@ function New-ODFolder {
 }
 
 function Remove-ODItem {
-<#
-	.SYNOPSIS
-		Delete an item
+	<#
+			.SYNOPSIS
+			Delete an item
 
-	.DESCRIPTION
-		Delete an item (folder or file)
+			.DESCRIPTION
+			Delete an item (folder or file)
 
-	.PARAMETER AccessToken
-		A valid access token for bearer authorization
+			.PARAMETER AccessToken
+			A valid access token for bearer authorization
 
-	.PARAMETER Path
-		Specifies the path of the item to be deleted
+			.PARAMETER Path
+			Specifies the path of the item to be deleted
 
-	.PARAMETER ElementID
-		Specifies the element id of the item to be deleted
+			.PARAMETER ElementID
+			Specifies the element id of the item to be deleted
 
-	.PARAMETER DriveID
-		Specifies the OneDrive drive id. If not set, the default drive is used
+			.PARAMETER DriveID
+			Specifies the OneDrive drive id. If not set, the default drive is used
 
-	.EXAMPLE
-		PS C:\> Remove-ODItem -AccessToken $AuthToken -Path "/Data/documents/2016/Azure-big-picture.old.docx"
+			.EXAMPLE
+			PS C:\> Remove-ODItem -AccessToken $AuthToken -Path "/Data/documents/2016/Azure-big-picture.old.docx"
 
-		Description
-		-----------
-		Deletes an item
+			Description
+			-----------
+			Deletes an item
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'A valid access token for bearer authorization')]
+		[Parameter(Mandatory,
+		HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
 		[string]$AccessToken,
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'Specifies the path of the item to be deleted')]
+		[Parameter(Mandatory,
+		HelpMessage = 'Specifies the path of the item to be deleted')]
 		[ValidateNotNullOrEmpty()]
 		[string]$Path,
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'Specifies the element id of the item to be deleted')]
+		[Parameter(Mandatory,
+		HelpMessage = 'Specifies the element id of the item to be deleted')]
 		[ValidateNotNullOrEmpty()]
 		[string]$ElementID,
 		[string]$DriveID = ''
@@ -679,50 +679,50 @@ function Remove-ODItem {
 }
 
 function Get-ODItem {
-<#
-	.SYNOPSIS
-		Download an item/file.
+	<#
+			.SYNOPSIS
+			Download an item/file.
 
-	.DESCRIPTION
-		Download an item/file.
-		Warning: A local file will be overwritten
+			.DESCRIPTION
+			Download an item/file.
+			Warning: A local file will be overwritten
 
-	.PARAMETER AccessToken
-		A valid access token for bearer authorization
+			.PARAMETER AccessToken
+			A valid access token for bearer authorization
 
-	.PARAMETER Path
-		Specifies the path of the file to download.
+			.PARAMETER Path
+			Specifies the path of the file to download.
 
-	.PARAMETER ElementID
-		Specifies the element id of the file to download. If Path and ElementID are given, the ElementID is used with a warning
+			.PARAMETER ElementID
+			Specifies the element id of the file to download. If Path and ElementID are given, the ElementID is used with a warning
 
-	.PARAMETER DriveID
-		Specifies the OneDrive drive id. If not set, the default drive is used
+			.PARAMETER DriveID
+			Specifies the OneDrive drive id. If not set, the default drive is used
 
-	.PARAMETER LocalPath
-		Save file to path (if not given, the current local path is used)
+			.PARAMETER LocalPath
+			Save file to path (if not given, the current local path is used)
 
-	.PARAMETER LocalFileName
-		Local filename. If not given, the file name of OneDrive is used
+			.PARAMETER LocalFileName
+			Local filename. If not given, the file name of OneDrive is used
 
-	.EXAMPLE
-		PS C:\> Get-ODItem -AccessToken $AuthToken -Path "/Data/documents/2016/Powershell array custom objects.docx"
+			.EXAMPLE
+			PS C:\> Get-ODItem -AccessToken $AuthToken -Path "/Data/documents/2016/Powershell array custom objects.docx"
 
-		Description
-		-----------
-		Downloads a file from OneDrive
+			Description
+			-----------
+			Downloads a file from OneDrive
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'A valid access token for bearer authorization')]
+		[Parameter(Mandatory,
+		HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
 		[string]$AccessToken,
 		[string]$Path = '',
@@ -764,54 +764,54 @@ function Get-ODItem {
 }
 
 function Add-ODItem {
-<#
-	.SYNOPSIS
-		Upload an item/file.
+	<#
+			.SYNOPSIS
+			Upload an item/file.
 
-	.DESCRIPTION
-		Upload an item/file.
-		Warning: An existing file will be overwritten
+			.DESCRIPTION
+			Upload an item/file.
+			Warning: An existing file will be overwritten
 
-	.PARAMETER AccessToken
-		A valid access token for bearer authorization
+			.PARAMETER AccessToken
+			A valid access token for bearer authorization
 
-	.PARAMETER Path
-		Specifies the path for the upload folder. If not given, the path is "/"
+			.PARAMETER Path
+			Specifies the path for the upload folder. If not given, the path is "/"
 
-	.PARAMETER ElementID
-		Specifies the element id for the upload folder. If Path and ElementID are given, the ElementID is used with a warning
+			.PARAMETER ElementID
+			Specifies the element id for the upload folder. If Path and ElementID are given, the ElementID is used with a warning
 
-	.PARAMETER DriveID
-		Specifies the OneDrive drive id. If not set, the default drive is used
+			.PARAMETER DriveID
+			Specifies the OneDrive drive id. If not set, the default drive is used
 
-	.PARAMETER LocalFile
-		Path and file of the local file to be uploaded
+			.PARAMETER LocalFile
+			Path and file of the local file to be uploaded
 
-	.EXAMPLE
-		PS C:\> Add-ODItem -AccessToken $AuthToken -Path "/Data/documents/2016" -LocalFile "AzureML with PowerShell.docx"
+			.EXAMPLE
+			PS C:\> Add-ODItem -AccessToken $AuthToken -Path "/Data/documents/2016" -LocalFile "AzureML with PowerShell.docx"
 
-		Description
-		-----------
-		Upload a file to OneDrive "/data/documents/2016"
+			Description
+			-----------
+			Upload a file to OneDrive "/data/documents/2016"
 
-	.NOTES
-		Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
+			.NOTES
+			Original author: Marcel Meurer, marcel.meurer@sepago.de, Twitter: MarcelMeurer
 
-	.LINK
-		https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
-#>
+			.LINK
+			https://www.sepago.com/blog/2016/02/21/Use-PowerShell-Module-OneDrive-from-PowerShellGallery-command-line
+	#>
 
 	param
 	(
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'A valid access token for bearer authorization')]
+		[Parameter(Mandatory,
+		HelpMessage = 'A valid access token for bearer authorization')]
 		[ValidateNotNullOrEmpty()]
 		[string]$AccessToken,
 		[string]$Path = '/',
 		[string]$ElementID = '',
 		[string]$DriveID = '',
-		[Parameter(Mandatory = $true,
-				   HelpMessage = 'Path and file of the local file to be uploaded')]
+		[Parameter(Mandatory,
+		HelpMessage = 'Path and file of the local file to be uploaded')]
 		[ValidateNotNullOrEmpty()]
 		[string]$LocalFile
 	)

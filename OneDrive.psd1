@@ -1,24 +1,24 @@
 ﻿@{
 	# Die diesem Manifest zugeordnete Skript- oder Binärmoduldatei.
-	RootModule = "OneDrive.psm1"
+	RootModule = 'OneDrive.psm1'
 	
 	# Die Versionsnummer dieses Moduls
-	ModuleVersion = "0.9.3"
+	ModuleVersion = '0.9.4'
 	
 	# ID zur eindeutigen Kennzeichnung dieses Moduls
-	GUID = "a12f3318-5047-4efd-8b6c-3ce76b218930"
+	GUID = 'a12f3318-5047-4efd-8b6c-3ce76b218930'
 	
 	# Autor dieses Moduls
-	Author = "Marcel.Meurer@sepago.de"
+	Author = 'Marcel.Meurer@sepago.de'
 	
 	# Unternehmen oder Hersteller dieses Moduls
-	CompanyName = "sepago GmbH"
+	CompanyName = 'sepago GmbH'
 	
 	# Urheberrechtserklärung für dieses Modul
-	Copyright = "(c) 2016 Marcel.Meurer@sepago.de"
+	Copyright = '(c) 2016 Marcel.Meurer@sepago.de'
 	
 	# Beschreibung der von diesem Modul bereitgestellten Funktionen
-	Description = "Provides function to access OneDrive with PowerShell. You can list directories, get metadata of files and folder, create folders, delete folders and file and for sure: Upload and download files. This module uses the OneDrive web api and you need a free id to use this module von Microsoft (https://dev.onedrive.com/app-registration.htm). At this time there are some functions missing, like rename files. Please write me a mail if you find some errors or if you have a request."
+	Description = 'Provides function to access OneDrive with PowerShell. You can list directories, get metadata of files and folder, create folders, delete folders and file and for sure: Upload and download files. This module uses the OneDrive web api and you need a free id to use this module von Microsoft (https://dev.onedrive.com/app-registration.htm). At this time there are some functions missing, like rename files. Please write me a mail if you find some errors or if you have a request.'
 	
 	# Die für dieses Modul mindestens erforderliche Version des Windows PowerShell-Moduls
 	# PowerShellVersion = "3.0"
@@ -57,16 +57,16 @@
 	# NestedModules = @()
 	
 	# Aus diesem Modul zu exportierende Funktionen
-	FunctionsToExport = "*"
+	FunctionsToExport = '*'
 	
 	# Aus diesem Modul zu exportierende Cmdlets
-	CmdletsToExport = "*"
+	CmdletsToExport = '*'
 	
 	# Die aus diesem Modul zu exportierenden Variablen
-	VariablesToExport = "*"
+	VariablesToExport = '*'
 	
 	# Aus diesem Modul zu exportierende Aliase
-	AliasesToExport = "*"
+	AliasesToExport = '*'
 	
 	# Aus diesem Modul zu exportierende DSC-Ressourcen
 	# DscResourcesToExport = @()
